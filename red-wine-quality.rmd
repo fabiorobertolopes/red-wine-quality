@@ -1,4 +1,4 @@
-TÍTULO por SEU_NOME_AQUI
+Estudo sobre dados de Vinhos Tintos por Fábio Roberto Lopes
 ========================================================
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
@@ -14,7 +14,7 @@ library(ggplot2)
 
 ```{r echo=FALSE, Load_the_Data}
 # Carregamento dos dados
-
+wine <- read.csv('wineQualityReds.csv', sep = ',', quote = '"')
 ```
 
 # Seção de Gráficos Univariados
