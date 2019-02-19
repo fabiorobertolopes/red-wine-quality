@@ -10,6 +10,8 @@ Estudo sobre dados de Vinhos Tintos por Fábio Roberto Lopes
 # Você deve definir echo=FALSE para todos os blocos de código no seu arquivo.
 
 library(ggplot2)
+library(knitr)
+library(dplyr)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -19,6 +21,9 @@ wine <- read.csv('wineQualityReds.csv', sep = ',', quote = '"')
 
 # Seção de Gráficos Univariados
 ```{r echo=FALSE, Univariate_Plots}
+ggplot(wine, aes(quality)) +
+  geom_histogram(binwidth = 1)
+
 
 ```
 
