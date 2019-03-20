@@ -27,34 +27,41 @@ wine <- read.csv('wineQualityReds.csv', sep = ',', quote = '"')
 Verificando algumas linhas dos dados
 
 ```{r echo=FALSE, Univariate_Plots}
+#Verificando algumas linhas dos dados
 head(wine)
 ```
 
 Existem 11 atributos que podem contribuir na qualidade do vinho. A qualidade do vinho está pontuada de 0 a 10.
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel quality
 ggplot(wine, aes(quality)) +
   geom_histogram(binwidth = 1)
 
+#Resumo da variavel quality
 summary(wine$quality)
 ```
 
 Pelo gráfico/resumo anterior, podemos observar que a qualidade dos vinhos observados vão de 3 a 8.
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel residual.sugar
 ggplot(wine, aes(residual.sugar)) +
   geom_histogram()
 
+#Resumo da variavel residual.sugar
 summary(wine$residual.sugar)
 ```
 
 Os dados estão muito concentrados, vamos exibir valores de 0.1 em 0.1 e dar um zoom na região entre 0 e 4. 
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel residual.sugar com intervalo de 0.1 e valor entre 0 e 4
 ggplot(wine, aes(residual.sugar)) +
   geom_histogram(binwidth = 0.1) +
   xlim(0, 4)
 
+#Resumo da variavel residual.sugar com valores entre 0 e 4
 summary(subset(wine$residual.sugar,
                wine$residual.sugar < 4))
 ```
@@ -62,15 +69,18 @@ summary(subset(wine$residual.sugar,
 Podemos observar que a maioria dos valores giram em torno de 2.
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel alcohol com intervalo de 0.1
 ggplot(wine, aes(alcohol)) +
   geom_histogram(binwidth = 0.1)
 
+#Resumo da variavel alcohol
 summary(wine$alcohol)
 ```
 
 Olhando para o atributo alcool, vemos que existe uma concentração grande em 9.5.
 
 ```{r echo=FALSE}
+#Gerando gráfico das demais variaveis
 p1 <- qplot(wine$fixed.acidity)
 p2 <- qplot(wine$volatile.acidity)
 p3 <- qplot(wine$citric.acid)
@@ -80,25 +90,31 @@ p6 <- qplot(wine$total.sulfur.dioxide)
 p7 <- qplot(wine$density)
 p8 <- qplot(wine$pH)
 p9 <- qplot(wine$sulphates)
+
+#Plotar os gráficos juntos em 3 colunas por linha
 grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, ncol = 3)
 ```
 
 Observando os demais atributos, vamos pegar o cloreto que possui uma concentração grande em uma região, vamos utilizar log10 para mudar a escala, pois os dados parecem estar bem agrupados.
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel chlorides usando escala log10 
 ggplot(wine, aes(x = chlorides)) +
   geom_histogram() +
   scale_x_log10()
 
+#Resumo da variavel chlorides
 summary(wine$chlorides)
 ```
 
 Vamos ver o ácido cítrico com um binwidth bem pequeno.
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel citric.acid com intervalo de 0.01
 ggplot(wine, aes(x = citric.acid)) +
   geom_histogram(binwidth = 0.01)
 
+#Resumo da variavel citric.acid
 summary(wine$citric.acid)
 ```
 
@@ -107,9 +123,11 @@ Pelo que observamos a maioria dos vinhos tintos possuem 0 de ácido cítrico. Te
 Agora vamos olhar a densidade que aparentemente parecem estar distribuídas de forma normal.
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel density com intervalo de 0.0001
 ggplot(wine, aes(x = density)) +
   geom_histogram(binwidth = 0.0001)
 
+#Resumo da variavel density
 summary(wine$density)
 ```
 
@@ -132,15 +150,19 @@ Sim, no cloreto. Ajustei com a escala log10 para poder visualizar melhor os valo
 
 # Seção de Gráficos Bivariados
 ```{r echo=FALSE, Bivariate_Plots}
+#Correlação entre as variavéis e arredondar os valores com 3 casas decimais
 round(cor(wine), 3)
 ```
 
 Há muitas coisas para olhar, então vamos tentar reduzi-las antes de fazermos uma matriz de dispersão. Corremos o risco de perder alguns detalhes. Vamos considerar o ácido como um substituto para a acidez, a acidez volátil e o pH. Nós também faremos o mesmo usando sulfatos para dióxido de enxofre e dióxido de enxofre total.
 
 ```{r echo=FALSE}
+#Reduzindo nosso conjunto de dados para explorar
 wine_sub <- subset(wine,
                      select = -c(fixed.acidity, volatile.acidity,
                                  pH, free.sulfur.dioxide, total.sulfur.dioxide))
+
+#Gerando uma matriz dos gráficos
 ggpairs(wine_sub)
 ```
 
@@ -148,6 +170,7 @@ Os cloretos parecem estar relativamente correlacionados com muitas outras variá
 Como o interesse é a qualidade, vamos dar uma olhada nos itens mais correlacionados, como álcool, sulfatos e ácido cítrico.
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel alcohol x quality
 ggplot(wine, aes(x = alcohol, y = quality)) +
   geom_point()
 ```
@@ -155,6 +178,7 @@ ggplot(wine, aes(x = alcohol, y = quality)) +
 Isso é difícil de ver porque muitos pontos estão provavelmente um em cima do outro. Vamos adicionar um pouco de jitter e uma linha de tendência.
 
 ```{r echo=FALSE}
+#Gerando gráfico da variavel alcohol x quality
 ggplot(wine, aes(x = alcohol, y = quality)) +
   geom_jitter(alpha = 0.25) +
   geom_smooth(method = "lm")
