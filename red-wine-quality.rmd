@@ -1,4 +1,4 @@
-Estudo sobre dados de Vinhos Tintos por Fábio Roberto Lopes
+Estudo sobre dados de Vinhos Tintos por Fábio Lopes
 ========================================================
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
@@ -17,23 +17,23 @@ library(GGally)
 library(RColorBrewer)
 ```
 
-```{r echo=FALSE, Load_the_Data}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Load_the_Data}
 #Carregando os dados
 wine <- read.csv('wineQualityReds.csv', sep = ',', quote = '"')
 ```
 
-# Seção de Gráficos Univariados
+## Seção de Gráficos Univariados
 
 Verificando algumas linhas dos dados
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Univariate_Plots}
 #Verificando algumas linhas dos dados
 head(wine)
 ```
 
 Existem 11 atributos que podem contribuir na qualidade do vinho. A qualidade do vinho está pontuada de 0 a 10.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico da variavel quality
 ggplot(wine, aes(quality)) +
   geom_histogram(binwidth = 1)
@@ -44,7 +44,7 @@ summary(wine$quality)
 
 Pelo gráfico/resumo anterior, podemos observar que a qualidade dos vinhos observados vão de 3 a 8.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico da variavel residual.sugar
 ggplot(wine, aes(residual.sugar)) +
   geom_histogram()
@@ -55,7 +55,7 @@ summary(wine$residual.sugar)
 
 Os dados estão muito concentrados, vamos exibir valores de 0.1 em 0.1 e dar um zoom na região entre 0 e 4. 
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico da variavel residual.sugar com intervalo de 0.1 e valor entre 0 e 4
 ggplot(wine, aes(residual.sugar)) +
   geom_histogram(binwidth = 0.1) +
@@ -68,7 +68,7 @@ summary(subset(wine$residual.sugar,
 
 Podemos observar que a maioria dos valores giram em torno de 2.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico da variavel alcohol com intervalo de 0.1
 ggplot(wine, aes(alcohol)) +
   geom_histogram(binwidth = 0.1)
@@ -79,7 +79,7 @@ summary(wine$alcohol)
 
 Olhando para o atributo alcool, vemos que existe uma concentração grande em 9.5.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico das demais variaveis
 p1 <- qplot(wine$fixed.acidity)
 p2 <- qplot(wine$volatile.acidity)
@@ -97,7 +97,7 @@ grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, ncol = 3)
 
 Observando os demais atributos, vamos pegar o cloreto que possui uma concentração grande em uma região, vamos utilizar log10 para mudar a escala, pois os dados parecem estar bem agrupados.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico da variavel chlorides usando escala log10 
 ggplot(wine, aes(x = chlorides)) +
   geom_histogram() +
@@ -109,7 +109,7 @@ summary(wine$chlorides)
 
 Vamos ver o ácido cítrico com um binwidth bem pequeno.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico da variavel citric.acid com intervalo de 0.01
 ggplot(wine, aes(x = citric.acid)) +
   geom_histogram(binwidth = 0.01)
@@ -122,7 +122,7 @@ Pelo que observamos a maioria dos vinhos tintos possuem 0 de ácido cítrico. Te
 
 Agora vamos olhar a densidade que aparentemente parecem estar distribuídas de forma normal.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico da variavel density com intervalo de 0.0001
 ggplot(wine, aes(x = density)) +
   geom_histogram(binwidth = 0.0001)
@@ -131,7 +131,7 @@ ggplot(wine, aes(x = density)) +
 summary(wine$density)
 ```
 
-# Análise Univariada
+## Análise Univariada
 
 ### Qual é a estrutura do conjunto de dados?
 Existem 1599 observações neste conjunto de dados, cada um com 12 atributos. A maioria das variáveis tem distribuições de cauda longa. Alguns, como acidez e densidade, são distribuições normais.
@@ -148,70 +148,88 @@ Não.
 ### Dos atributos investigados, distribuições incomuns foram encontradas? Você aplicou operações nos dados para limpá-los, ajustá-los ou mudar a forma dos dados? Se sim, por quê?
 Sim, no cloreto. Ajustei com a escala log10 para poder visualizar melhor os valores, pois estavam muito concentrados em uma região.
 
-# Seção de Gráficos Bivariados
-```{r echo=FALSE, Bivariate_Plots}
+## Seção de Gráficos Bivariados
+```{r echo=FALSE, message=FALSE, warning=FALSE, Bivariate_Plots}
 #Correlação entre as variavéis e arredondar os valores com 3 casas decimais
 round(cor(wine), 3)
 ```
 
 Há muitas coisas para olhar, então vamos tentar reduzi-las antes de fazermos uma matriz de dispersão. Corremos o risco de perder alguns detalhes. Vamos considerar o ácido como um substituto para a acidez, a acidez volátil e o pH. Nós também faremos o mesmo usando sulfatos para dióxido de enxofre e dióxido de enxofre total.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Reduzindo nosso conjunto de dados para explorar
 wine_sub <- subset(wine,
                      select = -c(fixed.acidity, volatile.acidity,
                                  pH, free.sulfur.dioxide, total.sulfur.dioxide))
 
 #Gerando uma matriz dos gráficos
-ggpairs(wine_sub)
+ggcorr(wine_sub, geom = "circle")
 ```
 
 Os cloretos parecem estar relativamente correlacionados com muitas outras variáveis. Ácido cítrico, densidade, sulfatos e álcool, todos têm uma correlação coeficiente acima de 0,2 com cloretos.
 Como o interesse é a qualidade, vamos dar uma olhada nos itens mais correlacionados, como álcool, sulfatos e ácido cítrico.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 #Gerando gráfico da variavel alcohol x quality
 ggplot(wine, aes(x = alcohol, y = quality)) +
   geom_point()
+
+#Resumo da variavel alcohol x quality
+by(wine$alcohol, wine$quality, summary)
 ```
 
 Isso é difícil de ver porque muitos pontos estão provavelmente um em cima do outro. Vamos adicionar um pouco de jitter e uma linha de tendência.
 
-```{r echo=FALSE}
-#Gerando gráfico da variavel alcohol x quality
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Gerando gráfico da variavel alcohol x quality e tentando separar os pontos que estão em cima
 ggplot(wine, aes(x = alcohol, y = quality)) +
   geom_jitter(alpha = 0.25) +
   geom_smooth(method = "lm")
+
+#Resumo da variavel alcohol x quality
+by(wine$alcohol, wine$quality, summary)
 ```
 
 Parece haver uma forma geral "acima e à direita" dos pontos, mas há muitas observações em torno de 9,5% de álcool que podem estar afetando a correlação.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Gerando gráfico da variavel alcohol x density
 ggplot(wine, aes(x = alcohol, y = density)) +
   geom_point(alpha = 0.25) +
   geom_smooth(method = "lm")
+
+#Resumo da variavel alcohol x density
+by(wine$alcohol, wine$density, summary)
 ```
 
 Isso parece ter um relacionamento mais forte do que o álcool e a qualidade, embora os coeficientes de correlação não sejam tão diferentes.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Gerando gráfico da variavel residual.sugar x quality
 ggplot(wine, aes(x = residual.sugar, y = quality)) +
   xlim(0, quantile(wine$residual.sugar, 0.95)) +
   xlab("residual sugar (bottom 95%") +
   geom_jitter(alpha = 0.15)
+
+#Resumo da variavel residual.sugar x quality
+by(wine$residual.sugar, wine$quality, summary)
 ```
 
 Não há realmente nenhum relacionamento aqui. A maioria dos vinhos tinha apenas cerca de 2 g / L de açúcar, e os maiores valores de açúcar são distribuídos entre as qualidades esperadas. 
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Gerando gráfico da variavel fixed.acidity x pH
 ggplot(wine, aes(x = fixed.acidity, y = pH)) +
   geom_point(alpha = 0.25) +
   geom_smooth(method = 'lm')
+
+#Resumo da variavel fixed.acidity x pH
+by(wine$fixed.acidity, wine$pH, summary)
 ```
 
 Aqui é importante lembrar que os valores de pH mais baixos significam mais ácidos. Existe uma tendência ali. Quanto mais acidez houver, mais ácido o vinho é.
 
-# Análise Bivariada
+## Análise Bivariada
 
 ### Discuta sobre alguns dos relacionamentos observados nesta parte da investigação. Como os atributos de interesse variaram no conjunto de dados?
 O açucar não influencia na qualidade do vinho. Também pensei que o teor alcoolico influenciace no indice de qualidade.
@@ -224,9 +242,10 @@ O relacionamento mais forte era fácil de adivinhar. O pH e a acidez foram corre
 
 
 
-# Seção de Gráficos Multivariados
+## Seção de Gráficos Multivariados
 
-```{r echo=FALSE, Multivariate_Plots}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_Plots}
+#Gerando gráfico da variavel alcohol x quality x volatile.acidity
 ggplot(wine, aes(x = alcohol, y = quality, color = volatile.acidity)) +
   geom_jitter() +
   scale_color_gradient(high = 'red', low = 'blue')
@@ -236,7 +255,8 @@ Eu tentei fazer as cores distintas aqui e ainda não consigo ver um padrão clar
 
 Talvez o ácido cítrico e o álcool juntos possam prever a qualidade.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Gerando gráfico da variavel alcohol x quality x citric.acid
 ggplot(wine, aes(x = alcohol, y = quality, color = citric.acid)) +
   geom_jitter() +
   scale_color_gradient(high = 'red', low = 'blue')
@@ -246,15 +266,17 @@ Há um pouco de padrão onde os pontos ficam mais vermelhos a direita, mas não 
 
 Nesse ponto, acho que selecionar as duas variáveis com os maiores coeficientes de correlação pode revelar algo.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Gerando gráfico da variavel alcohol x volatile.acidity x quality
 ggplot(wine, aes(x = alcohol, y = volatile.acidity, color = factor(quality))) +
   geom_jitter() +
-  scale_color_brewer()
+  scale_color_brewer(palette = "RdYlGn")
 ```
 
 Aqui aparece um padrão, mas não acho que acrescente mais alguma informação. Nós já sabíamos que mais álcool e menos acidez volátil faziam melhor vinho, mas pelo menos isso mostra que essas duas coisas não funcionam umas contra as outras.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#Gerando gráfico da variavel alcohol x density x residual.sugar
 ggplot(wine, aes(x = alcohol, y = density, color = residual.sugar)) +
   geom_jitter() +
   scale_color_gradient2(limits=c(0, quantile(wine$residual.sugar, 0.95)),
@@ -263,7 +285,7 @@ ggplot(wine, aes(x = alcohol, y = density, color = residual.sugar)) +
 
 Este é provavelmente o mais legal que eu encontrei. A densidade diminui à medida que o álcool aumenta. O que pode não ser tão óbvio é que a densidade aumenta à medida que o açúcar aumenta, mas é na direção oposta. A mediana do açúcar residual é paralela à linha de tendência da densidade vs álcool. Muito limpo.
 
-# Análise Multivariada
+## Análise Multivariada
 
 ### Discuta sobre os relacionamentos observados nesta parte da investigação. Quais atributos que fortaleceram os demais na observação das variáveis de interesse?
 A única relação que realmente vi foi com o último gráfico. Você pode dizer que à medida que o álcool aumenta e a acidez volátil diminui, a qualidade aumenta.
@@ -271,14 +293,15 @@ A única relação que realmente vi foi com o último gráfico. Você pode dizer
 ### Interações surpreendentes e/ou interessantes foram encontradas entre os atributos?
 Não
 
-### OPCIONAL: Modelos foram criados usando este conjunto de dados? Discuta sobre os pontos fortes e as limitações do seu modelo.
+### Modelos foram criados usando este conjunto de dados? Discuta sobre os pontos fortes e as limitações do seu modelo.
+Não
 
 ------
 
-# Gráficos Finais e Sumário
+## Gráficos Finais e Sumário
 
-### Primeiro Gráfico
-```{r echo=FALSE, Plot_One}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_One}
+#Gerando gráfico da variavel alcohol % (quantidade de vinhos)
 ggplot(wine, aes(alcohol)) +
   geom_histogram(binwidth = 0.1) +
   geom_vline(xintercept = median(wine$alcohol), color = 'royalblue') +
@@ -298,11 +321,10 @@ ggplot(wine, aes(alcohol)) +
   ylab("Número de Vinhos")
 ```
 
-### Descrição do Primeiro Gráfico
 Não temos muitas observações acima de 12% de alcool. Com isso temos que levar em consideração quando analisamos a relação do alcool com a qualidade dos vinhos.
 
-### Segundo Gráfico
-```{r echo=FALSE, Plot_Two}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Two}
+#Gerando gráfico da variavel alcohol x quality
 ggplot(wine, aes(x = alcohol, y = quality)) +
   geom_jitter(alpha = 0.1, height = 0.48, width = 0.025) +
   geom_smooth(method = "lm") +
@@ -311,11 +333,10 @@ ggplot(wine, aes(x = alcohol, y = quality)) +
   ylab("Qualidade (0-10)")
 ```
 
-### Descrição do Segundo Gráfico
 Observamos que quanto mais alcool, mais aumenta a qualidade do vinho. Porém seria interessante ter mais observações com vinhos com mais alcool para poder confirmar.
 
-### Terceiro Gráfico
-```{r echo=FALSE, Plot_Three}
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
+#Gerando gráfico da variavel alcohol x volatile.acidity x quality
 ggplot(wine, aes(x = alcohol, y = volatile.acidity, color = factor(quality))) +
   geom_jitter() +
   scale_color_brewer(name = "Quality") +
@@ -324,11 +345,10 @@ ggplot(wine, aes(x = alcohol, y = volatile.acidity, color = factor(quality))) +
   ylab("Acidez Volatil (g/L)")
 ```
 
-### Descrição do Terceiro Gráfico
 Este gráfico mostra como a qualidade melhora à medida que o teor alcoólico aumenta e a acidez volátil diminui. Há uma tendência geral de as cores ficarem mais escuras à medida que vão para o canto inferior direito.
 
 
-# Reflexão
+## Reflexão
 Este conjunto de dados tem 11 propriedades de 1599 vinhos tintos. Depois de examinar as distribuições de algumas variáveis, examinei a relação entre duas e, eventualmente, combinações de três variáveis.
 
 A distribuição mais inesperada que vi foi o ácido cítrico. Ele teve o maior pico em torno de 0 e meio, mas aumentou em torno de 0,24 e 0,49 g / L. Olhando as informações do conjunto de dados, não consegui encontrar um bom motivo para essa distribuição. Pode ter algo a ver com o tipo de vinho tinto que eles usaram. Seria interessante investigar mais.
@@ -337,3 +357,4 @@ Eu usei uma matriz de correlação e uma matriz de gráfico de dispersão para d
 
 A seção de análise multivariada foi a mais difícil para mim. Eu não tinha certeza de quais variáveis poderiam ajudar para prever a qualidade. Acho que o melhor que consegui encontrar foi um par de propriedade que não tinha relação uma com a outras. A acidez volátil e o álcool foram os dois atributos com as maiores correlações e, quando trabalham juntos, há uma clara tendência na qualidade.
 
+Para melhorar a analise no futuro, poderia colher mais dados de vinhos de baixa e alta qualidade. Percebi que o conjunto de dados é desproporcional, ou seja, existe muitos dados para vinhos de qualidade entre 5 e 6, porém para baixo (entre 3 e 4) e alta qualidade (entre 7 e 8) existem menos dados. Se o conjunto de dados tiver mais registros, tanto para qualidade mais baixas e para qualidades mais altas, melhoraria e muito a qualidade da análise. Podemos ter mais certeza se existe uma correlação significativa entre uma variavel e a qualidade do vinho.
